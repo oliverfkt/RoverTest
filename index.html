@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROVER 記錄抹煞手速大賽</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: system-ui;
+            background: #eeeee4;
+            color: white;
+        }
+
+        #banner {
+            font-size: 36px;
+            font-weight: bold;
+            background-color: #333;
+            color: #fff;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-container {
+            position: relative;
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #countdown {
+            color: black;
+            font-size: 30px;
+        }
+
+        button {
+            font-size: 22px;
+            cursor: pointer;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+        }
+
+        #start-button, #retry-button {
+            font-size: 26px;
+            width: 200px;
+            height: 70px;
+            background-color: #28a745;
+            color: white;
+        }
+
+        #retry-button {
+            background-color: #007bff;
+            font-size: 24px;
+            padding: 5px;
+        }
+
+        #delete-button {
+            font-size: 50px;
+            background: red;
+            border-radius: 50%;
+            font-weight: bold;
+            width: 150px;
+            height: 150px;
+        }
+
+        #click-count {
+            font-size: 24px;
+            margin-top: 10px;
+            color: black;
+        }
+
+        #game-image {
+            width: 350px;
+            margin-top: 20px;
+        }
+
+        #countdown-text {
+            font-size: 36px;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="banner">
+        ROVER 記錄抹煞手速大賽
+    </div>
+    <div id="game-container">
+        <img src="https://stream.881903.com/public/cb32b7e43cf7f861401bf1bc20ae44ab/2025/03/ec2aa776cce8a3415527da60f9160c18.jpg" alt="Game Image" id="game-image">
+        <p id="countdown-text"></p>
+        <p id="countdown">倒數 <span id="countdown-value">22</span> 秒</p>
+        <p id="click-count"></p>
+        <button id="start-button">開始</button>
+        <button id="delete-button" style="display: none;">X</button>
+        <br>
+        <button id="retry-button" style="display: none;">再刪除多次記錄</button>
+    </div>
+
+    <!-- 🔊 Audio for when the delete button appears -->
+    <audio id="delete-sound" src="DamnatioMemoriae.mp3"></audio>
+
+    <script>
+        let timeLeft = 22;
+        let clickCount = 0;
+        let countdownInterval;
+
+        const countdownElement = document.getElementById('countdown-value');
+        const countdownText = document.getElementById('countdown-text');
+        const deleteButton = document.getElementById('delete-button');
+        const clickCountElement = document.getElementById('click-count');
+        const retryButton = document.getElementById('retry-button');
+        const startButton = document.getElementById('start-button');
+        const deleteSound = document.getElementById('delete-sound'); // Audio element
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none';
+            countdownText.textContent = "3";
+
+            setTimeout(() => {
+                countdownText.textContent = "2";
+
+                setTimeout(() => {
+                    countdownText.textContent = "1";
+
+                    setTimeout(() => {
+                        countdownText.textContent = "";
+                        deleteButton.style.display = 'block'; // Show delete button
+                        deleteSound.play(); // Play sound when delete button appears
+
+                        countdownInterval = setInterval(() => {
+                            timeLeft--;
+                            countdownElement.textContent = timeLeft;
+
+                            if (timeLeft === 0) {
+                                clearInterval(countdownInterval);
+                                deleteButton.disabled = true;
+                                retryButton.style.display = 'block';
+                            }
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        });
+
+        deleteButton.addEventListener('click', () => {
+            clickCount++;
+            clickCountElement.textContent = `已刪除 ${clickCount} 次記錄`;
+        });
+
+        retryButton.addEventListener('click', () => {
+            clearInterval(countdownInterval);
+            timeLeft = 22;
+            clickCount = 0;
+            countdownElement.textContent = timeLeft;
+            clickCountElement.textContent = '0 Clicks';
+            deleteButton.disabled = false;
+            retryButton.style.display = 'none';
+            startButton.style.display = 'block';
+            deleteButton.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>
